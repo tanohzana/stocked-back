@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -67,12 +68,20 @@ func cronTask() {
 	}
 
 	stocks, err2 := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
 
 	if err2 != nil {
 		log.Fatal(err2)
 	}
 
-	resp.Body.Close()
+	stocksJson := getJsonFormatFromString(string(stocks))
 
-	fmt.Println(string(stocks))
+	fmt.Println(stocksJson)
+}
+
+func getJsonFormatFromString(jsonString string) map[string]interface{} {
+	var result map[string]interface{}
+	json.Unmarshal([]byte(jsonString), &result)
+
+	return result
 }
